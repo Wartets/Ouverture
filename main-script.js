@@ -11,7 +11,7 @@ const backgroundHeight = 951;
 const githubURL = (name) => `https://raw.githubusercontent.com/Wartets/Ouverture/refs/heads/main/${name}`;
 
 const doors = new Map([
-	['doorInterior', { x: 896, y: 495, w: 74, h: 98, from: 'street', to: 'interior' }],
+	['doorInterior', { x: 896, y: 495, w: 74, h: 98, from: 'exterior', to: 'interior' }],
 	['doorRoom', { x: 1138, y: 237, w: 70, h: 130, from: 'interior', to: 'room' }],
 	['doorRoom2', { x: 1357, y: 204, w: 70, h: 135, from: 'interior', to: 'room2' }],
 	['doorRoom3', { x: 1585, y: 540, w: 130, h: 255, from: 'interior', to: 'room3' }],
@@ -19,22 +19,55 @@ const doors = new Map([
 	['doorBathroom', { x: 1100, y: 490, w: 35, h: 270, from: 'room', to: 'bathroom' }],
 	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'bathroom' }],
 	['doorbathroomMirror', { x: 552, y: 490, w: 35, h: 270, from: 'roomMirror', to: 'bathroomMirror' }],
-	['doorbathroomMirror2', { x: 642, y: 330, w: 130, h: 250, from: 'bathroom', to: 'bathroomMirror' }],
+	['doorbathroom2Mirror', { x: 642, y: 330, w: 130, h: 250, from: 'bathroom', to: 'bathroomMirror' }],
 	['doorLivingroom', { x: 1324, y: 480, w: 230, h: 240, from: 'interior', to: 'livingroom' }],
 	['doorGarden', { x: 1404, y: 424, w: 215, h: 656, from: 'kitchen', to: 'garden' }],
-	['doorSun', { x: 1234, y: 23, w: 95, h: 47, from: 'street', to: 'sun' }],
-	['doorStreet', { x: 768, y: 285, w: 26, h: 26, from: 'earthMap', to: 'street' }],
+	['doorGarden2', { x: 39, y: 633, w: 78, h: 540, from: 'garden', to: 'kitchen' }],
+	['doorGarden3', { x: 500, y: 500, w: 100, h: 100, from: 'livingroom', to: 'garden' }],
+	['doorSun', { x: 1234, y: 23, w: 95, h: 47, from: 'exterior', to: 'sun' }],
+	['doorSun2', { x: 1215, y: 42, w: 131, h: 84, from: 'garden', to: 'sun' }],
+	['doorExterior', { x: 768, y: 285, w: 26, h: 26, from: 'earthMap', to: 'exterior' }],
 	['doorEarthBall', { x: 826, y: 195, w: 25, h: 25, from: 'sun', to: 'earthBall' }],
+	
+	['doorGarage', { x: 500, y: 500, w: 50, h: 120, from: 'room3', to: 'garage' }],
+	['doorAlley', { x: 500, y: 500, w: 50, h: 120, from: 'garage', to: 'alley' }],
+	['doorExterior2', { x: 400, y: 195, w: 50, h: 120, from: 'alley', to: 'exterior' }],
+	['doorGarden4', { x: 800, y: 195, w: 50, h: 120, from: 'alley', to: 'garden' }],
+	['doorAlley2', { x: 246, y: 545, w: 20, h: 250, from: 'garden', to: 'alley' }],
+	
+	['doorSun3', { x: 200, y: 200, w: 70, h: 70, from: 'solarSystem', to: 'sun' }],
+	['doorMercuryBall', { x: 300, y: 200, w: 10, h: 10, from: 'solarSystem', to: 'mercuryBall' }],
+	['doorVenusBall', { x: 400, y: 200, w: 17, h: 17, from: 'solarSystem', to: 'venusBall' }],
+	['doorEarthBall3', { x: 500, y: 200, w: 25, h: 25, from: 'solarSystem', to: 'earthBall' }],
+	['doorMarsBall', { x: 600, y: 200, w: 20, h: 20, from: 'solarSystem', to: 'marsBall' }],
+	['doorJupiterBall', { x: 750, y: 200, w: 45, h: 45, from: 'solarSystem', to: 'jupiterBall' }],
+	['doorSaturnBall', { x: 850, y: 200, w: 40, h: 40, from: 'solarSystem', to: 'saturnBall' }],
+	['doorUranusBall', { x: 950, y: 200, w: 35, h: 35, from: 'solarSystem', to: 'uranusBall' }],
+	['doorNeptuneBall', { x: 1050, y: 200, w: 35, h: 35, from: 'solarSystem', to: 'neptuneBall' }],
+	
+	['doorMercury', { x: 826, y: 500, w: 400, h: 400, from: 'mercuryBall', to: 'mercury' }],
+	['doorVenus', { x: 826, y: 500, w: 400, h: 400, from: 'venusBall', to: 'venus' }],
+	['doorMars', { x: 826, y: 500, w: 400, h: 400, from: 'marsBall', to: 'mars' }],
+	['doorJupiter', { x: 826, y: 500, w: 400, h: 400, from: 'jupiterBall', to: 'jupiter' }],
+	['doorSaturn', { x: 826, y: 500, w: 400, h: 400, from: 'saturnBall', to: 'saturn' }],
+	['doorUranus', { x: 826, y: 500, w: 400, h: 400, from: 'uranusBall', to: 'uranus' }],
+	['doorNeptune', { x: 826, y: 500, w: 400, h: 400, from: 'neptuneBall', to: 'neptune' }],
+	
 	['doorEarthBall2', { x: 359, y: 197, w: 150, h: 150, from: 'moon', to: 'earthBall' }],
 	['doorEarthMap', { x: 820, y: 430, w: 370, h: 370, from: 'earthBall', to: 'earthMap' }],
 	['doorMoon', { x: 1332, y: 256, w: 58, h: 58, from: 'earthBall', to: 'moon' }],
+	['doorCosmicWeb', { x: 500, y: 500, w: 50, h: 50, from: 'universe', to: 'cosmicWeb' }],
+	['doorSupercluster', { x: 500, y: 500, w: 50, h: 50, from: 'cosmicWeb', to: 'supercluster' }],
+	['doorLocalGroup', { x: 500, y: 500, w: 50, h: 50, from: 'supercluster', to: 'localGroup' }],
+	['doorGalaxy', { x: 500, y: 500, w: 50, h: 50, from: 'localGroup', to: 'galaxy' }],
+	['doorSolarSystem', { x: 500, y: 500, w: 50, h: 50, from: 'galaxy', to: 'solarSystem' }],
+	['doorForest', { x: 1113, y: 566, w: 80, h: 160, from: 'garden', to: 'forest' }],
 	
-	['exit-interior', { from: 'interior', to: 'street' }],
+	['exit-interior', { from: 'interior', to: 'exterior' }],
 	['exit-room', { from: 'room', to: 'interior' }],
 	['exit-room2', { from: 'room2', to: 'interior' }],
 	['exit-room3', { from: 'room3', to: 'interior' }],
 	['exit-kitchen', { from: 'kitchen', to: 'interior' }],
-	['exit-garden', { from: 'garden', to: 'kitchen' }],
 	['exit-bathroom', { from: 'bathroom', to: 'room' }],
 	['exit-bathroomMirror', { from: 'bathroomMirror', to: 'roomMirror' }],
 	['exit-livingroom', { from: 'livingroom', to: 'interior' }],
@@ -44,11 +77,30 @@ const doors = new Map([
 	['exit-localGroup', { from: 'localGroup', to: 'supercluster' }],
 	['exit-supercluster', { from: 'supercluster', to: 'cosmicWeb' }],
 	['exit-cosmicWeb', { from: 'cosmicWeb', to: 'universe' }],
+	['exit-forest', { from: 'forest', to: 'garden' }],
+	['exit-garage', { from: 'garage', to: 'room3' }],
+	['exit-alley', { from: 'alley', to: 'garage' }],
+	
+	['exit-mercury', { from: 'mercury', to: 'mercuryBall' }],
+	['exit-venus', { from: 'venus', to: 'venusBall' }],
+	['exit-mars', { from: 'mars', to: 'marsBall' }],
+	['exit-jupiter', { from: 'jupiter', to: 'jupiterBall' }],
+	['exit-saturn', { from: 'saturn', to: 'saturnBall' }],
+	['exit-uranus', { from: 'uranus', to: 'uranusBall' }],
+	['exit-neptune', { from: 'neptune', to: 'neptuneBall' }],
+	
+	['exit-mercuryBall', { from: 'mercuryBall', to: 'solarSystem' }],
+	['exit-venusBall', { from: 'venusBall', to: 'solarSystem' }],
+	['exit-marsBall', { from: 'marsBall', to: 'solarSystem' }],
+	['exit-jupiterBall', { from: 'jupiterBall', to: 'solarSystem' }],
+	['exit-saturnBall', { from: 'saturnBall', to: 'solarSystem' }],
+	['exit-uranusBall', { from: 'uranusBall', to: 'solarSystem' }],
+	['exit-neptuneBall', { from: 'neptuneBall', to: 'solarSystem' }],
 ]);
 
 const objects = new Map([
-	['cloud', { x: 407, y: 84, w: 562, h: 104, in: 'street', do: 'openwindow', variable: "oui, c'est un nuage" }],
-	['book', { x: 750, y: 520, w: 60, h: 80, in: 'room', do: 'openlink', variable: 'graphe.html' }],
+	['cloud', { x: 407, y: 84, w: 562, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage" }],
+	['book', { x: 750, y: 520, w: 60, h: 80, in: 'roomMirror', do: 'openlink', variable: 'graphe.html' }],
 	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
 	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3') }],
 	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/oven.mp3') }]
@@ -173,7 +225,7 @@ function updateActiveLayer() {
 document.addEventListener('DOMContentLoaded', () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	const sceneFromUrl = urlParams.get('scene');
-	const lastScene = sceneFromUrl || localStorage.getItem('lastScene') || 'street';
+	const lastScene = sceneFromUrl || localStorage.getItem('lastScene') || 'exterior';
 	
 	scene.classList.forEach(cls => {
 		if (cls.endsWith('True')) scene.classList.remove(cls);
