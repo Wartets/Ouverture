@@ -1,0 +1,256 @@
+let readyForPlacement = false;
+let currentBackgroundImage = null;
+let resizeScheduled = false;
+
+const scene = document.getElementById('scene');
+
+// Actual sizes of backgrounds (en px)
+const backgroundWidth = 1652;
+const backgroundHeight = 951;
+
+const doors = new Map([
+	['doorInterior', { x: 896, y: 495, w: 74, h: 98, from: 'street', to: 'interior' }],
+	['doorRoom', { x: 1138, y: 237, w: 70, h: 130, from: 'interior', to: 'room' }],
+	['doorRoom2', { x: 1357, y: 204, w: 70, h: 135, from: 'interior', to: 'room2' }],
+	['doorRoom3', { x: 1585, y: 540, w: 130, h: 255, from: 'interior', to: 'room3' }],
+	['doorKitchen', { x: 538, y: 510, w: 100, h: 300, from: 'interior', to: 'kitchen' }],
+	['doorBathroom', { x: 1100, y: 490, w: 35, h: 270, from: 'room', to: 'Bathroom' }],
+	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'Bathroom' }],
+	['doorbathroomMirror', { x: 552, y: 490, w: 35, h: 270, from: 'Roommirror', to: 'bathroomMirror' }],
+	['doorbathroomMirror2', { x: 642, y: 330, w: 130, h: 250, from: 'Bathroom', to: 'bathroomMirror' }],
+	['doorLivingroom', { x: 1324, y: 480, w: 230, h: 240, from: 'interior', to: 'livingroom' }],
+	['doorSun', { x: 1235, y: 23, w: 95, h: 47, from: 'street', to: 'sun' }],
+	['doorStreet', { x: 768, y: 285, w: 26, h: 26, from: 'earthMap', to: 'street' }],
+	['doorEarthBall', { x: 826, y: 195, w: 25, h: 25, from: 'sun', to: 'earthBall' }],
+	['doorEarthBall2', { x: 359, y: 197, w: 150, h: 150, from: 'moon', to: 'earthBall' }],
+	['doorEarthMap', { x: 820, y: 430, w: 370, h: 370, from: 'earthBall', to: 'earthMap' }],
+	['doorMoon', { x: 1332, y: 256, w: 58, h: 58, from: 'earthBall', to: 'moon' }],
+	
+	['exit-interior', { from: 'interior', to: 'street' }],
+	['exit-room', { from: 'room', to: 'interior' }],
+	['exit-room2', { from: 'room2', to: 'interior' }],
+	['exit-room3', { from: 'room3', to: 'interior' }],
+	['exit-kitchen', { from: 'kitchen', to: 'interior' }],
+	['exit-Bathroom', { from: 'Bathroom', to: 'room' }],
+	['exit-bathroomMirror', { from: 'bathroomMirror', to: 'Roommirror' }],
+	['exit-livingroom', { from: 'livingroom', to: 'interior' }],
+	['exit-sun', { from: 'sun', to: 'solarSystem' }],
+	['exit-solarSystem', { from: 'solarSystem', to: 'galaxy' }],
+	['exit-galaxy', { from: 'galaxy', to: 'localGroup' }],
+	['exit-localGroup', { from: 'localGroup', to: 'supercluster' }],
+	['exit-supercluster', { from: 'supercluster', to: 'cosmicWeb' }],
+	['exit-cosmicWeb', { from: 'cosmicWeb', to: 'universe' }],
+]);
+
+const objects = new Map([
+	['cloud', { x: 407, y: 84, w: 562, h: 104, in: 'street', do: 'alert', message: "oui, c'est un nuage" }],
+	['book', { x: 750, y: 520, w: 60, h: 80, in: 'street', do: 'openlink', message: 'https://example.com' }],
+	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'street', do: 'openwindow', message: 'poem.txt' }],
+]);
+
+const actions = {
+	alert: (msg) => alert(msg),
+	openlink: (url) => window.open(url, '_blank'),
+	openwindow: (message) => {
+		if (typeof message === 'string' && message.endsWith('.txt')) {
+			fetch(`assets/${message}`)
+				.then(response => {
+					if (!response.ok) throw new Error('Fichier introuvable');
+					return response.text();
+				})
+				.then(text => actions.openwindow(text))
+				.catch(err => actions.openwindow(`[Erreur de chargement : ${err.message}]`));
+			return;
+		}
+
+		const overlay = document.getElementById('letter-overlay');
+		const content = document.getElementById('letter-content');
+		const backdrop = document.getElementById('letter-backdrop');
+
+		content.innerText = message;
+
+		const len = message.length;
+		const maxAngle = 6;
+		const angle = (Math.sin(len) + Math.cos(len * 0.5)) * maxAngle;
+
+		content.style.transform = `rotate(${angle.toFixed(2)}deg)`;
+		overlay.style.display = 'flex';
+
+		const closeLetter = () => {
+			overlay.style.display = 'none';
+			backdrop.removeEventListener('click', closeLetter);
+		};
+
+		backdrop.addEventListener('click', closeLetter);
+	}
+};
+
+const allSceneNames = (() => {
+	const names = new Set();
+	doors.forEach(({from, to}) => {
+		if (from) names.add(from);
+		if (to) names.add(to);
+	});
+	return names;
+})();
+
+function getDisplayMetrics() {
+	const windowRatio = window.innerWidth / window.innerHeight;
+	const imageRatio = backgroundWidth / backgroundHeight;
+
+	let displayedWidth, displayedHeight, offsetLeft, offsetTop;
+
+	if (windowRatio > imageRatio) {
+		displayedHeight = window.innerHeight;
+		displayedWidth = backgroundWidth * (displayedHeight / backgroundHeight);
+		offsetTop = 0;
+		offsetLeft = (window.innerWidth - displayedWidth) / 2;
+	} else {
+		displayedWidth = window.innerWidth;
+		displayedHeight = backgroundHeight * (displayedWidth / backgroundWidth);
+		offsetLeft = 0;
+		offsetTop = (window.innerHeight - displayedHeight) / 2;
+	}
+
+	return {
+		offsetLeft,
+		offsetTop,
+		ratioX: displayedWidth / backgroundWidth,
+		ratioY: displayedHeight / backgroundHeight,
+	};
+}
+
+function placeObject(object, objectWidth, objectHeight, objectCenterX, objectCenterY) {
+	if (!currentBackgroundImage) return;
+	const { offsetLeft, offsetTop, ratioX, ratioY } = getDisplayMetrics();
+
+	object.style.left = `${offsetLeft + (objectCenterX - objectWidth / 2) * ratioX}px`;
+	object.style.top = `${offsetTop + (objectCenterY - objectHeight / 2) * ratioY}px`;
+	object.style.width = `${objectWidth * ratioX}px`;
+	object.style.height = `${objectHeight * ratioY}px`;
+}
+
+function updatePlacement() {
+	if (!readyForPlacement) return;
+
+	for (const [id, data] of doors) {
+		if (!('x' in data)) continue;
+
+		const el = document.getElementById(id);
+		if (el) placeObject(el, data.w, data.h, data.x, data.y);
+	}
+	
+
+	for (const [id, data] of objects) {
+		const el = document.getElementById(id);
+		if (el) placeObject(el, data.w, data.h, data.x, data.y);
+	}
+}
+
+function updateActiveLayer() {
+	const activeId = [...scene.classList].find(cls => cls.endsWith('True'))?.slice(0, -4);
+	if (!activeId) return;
+
+	document.querySelectorAll('.scene-layer').forEach(layer => {
+		layer.classList.toggle('active', layer.id === activeId);
+	});
+}
+
+function onClick_book() {
+	alert("Tu as cliqué sur le livre !");
+}
+
+function onClick_cloud() {
+	alert("Oui, c'est un nuage");
+}
+
+function onClick_lamp() {
+	alert("La lampe s'allume !");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	const lastScene = localStorage.getItem('lastScene') || 'street';
+	
+	scene.classList.forEach(cls => {
+		if (cls.endsWith('True')) scene.classList.remove(cls);
+	});
+	
+	scene.classList.add(`${lastScene}True`);
+	
+	allSceneNames.forEach(sceneName => {
+		const layer = document.createElement('div');
+		layer.id = sceneName;
+		layer.classList.add('scene-layer');
+		document.getElementById('scene').appendChild(layer);
+	});
+
+	for (const [id, data] of doors) {
+		const door = document.createElement('div');
+		door.id = id;
+		door.classList.add(id.startsWith('exit-') ? 'exit' : 'door');
+		const layer = document.getElementById(data.from);
+		if (layer) layer.appendChild(door);
+
+		door.addEventListener('click', () => {
+			scene.classList.remove(`${data.from}True`);
+			scene.classList.add(`${data.to}True`);
+			localStorage.setItem('lastScene', data.to);
+			updateActiveLayer();
+			updatePlacement();
+		});
+	}
+
+	for (const [id, data] of objects) {
+		const obj = document.createElement('div');
+		obj.id = id;
+		obj.classList.add('object');
+		const layer = document.getElementById(data.in);
+		if (layer) layer.appendChild(obj);
+
+		obj.addEventListener('click', () => {
+			const action = actions[data.do];
+			if (typeof action === 'function') {
+				action(data.message);
+			} else {
+				console.warn(`Action "${data.do}" inconnue pour l’objet "${id}"`);
+			}
+		});
+	}
+
+	const sceneLayers = document.querySelectorAll('.scene-layer');
+	let imagesLoaded = 0;
+	const totalImages = sceneLayers.length;
+
+	const loadImage = (layer) => new Promise(resolve => {
+		const id = layer.id;
+		const img = document.createElement('img');
+		img.id = `background-${id}`;
+		img.src = `assets/${id}.png`;
+		img.alt = `background of ${id}`;
+		img.style.pointerEvents = 'none';
+		img.onload = () => {
+		if (scene.classList.contains(`${id}True`)) {
+			currentBackgroundImage = img;
+		}
+		resolve();
+		};
+		layer.insertBefore(img, layer.firstChild);
+	});
+
+	Promise.all(Array.from(sceneLayers).map(loadImage)).then(() => {
+		readyForPlacement = true;
+		updatePlacement();
+	});
+
+	updateActiveLayer();
+});
+
+window.addEventListener('resize', () => {
+	if (!resizeScheduled) {
+		resizeScheduled = true;
+		requestAnimationFrame(() => {
+			updatePlacement();
+			resizeScheduled = false;
+		});
+	}
+});

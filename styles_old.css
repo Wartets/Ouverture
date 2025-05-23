@@ -1,0 +1,122 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background: #000;
+}
+
+#scene {
+	position: relative;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+}
+
+#street,
+#interior,
+#room1,
+#room2,
+#bathroom1,
+#kitchen {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#background-houseStreet,
+#background-houseInterior,
+#background-room1,
+#background-room2,
+#background-bathroom1,
+#background-kitchen {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	display: block;
+}
+
+#mainDoor,
+#doorRoom1,
+#doorRoom2,
+#doorBathroom1,
+#doorKitchen {
+	position: absolute;
+	background: transparent;
+	background-color: rgba(255, 0, 0, 0.3);
+	cursor: pointer;
+	z-index: 2;
+}
+
+#mainDoor:hover,
+#doorRoom1:hover,
+#doorRoom2:hover,
+#doorBathroom1:hover,
+#exit-house:hover,
+#exit-room1:hover,
+#exit-bathroom1:hover,
+#doorKitchen:hover {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+#interior,
+#room1,
+#room2,
+#bathroom1,
+#kitchen {
+	display: none;
+}
+
+#scene.interiorTrue #street,
+#scene.interiorTrue #bathroom1,
+#scene.interiorTrue #room1,
+#scene.interiorTrue #room2,
+#scene.interiorTrue #kitchen,
+#scene.room1True #street,
+#scene.room1True #interior,
+#scene.room1True #bathroom1,
+#scene.room1True #room2,
+#scene.room1True #kitchen,
+#scene.room2True #street,
+#scene.room2True #interior,
+#scene.room2True #bathroom1,
+#scene.room2True #room1,
+#scene.room2True #kitchen,
+#scene.bathroom1True #room1,
+#scene.bathroom1True #room2,
+#scene.bathroom1True #street,
+#scene.bathroom1True #interior,
+#scene.bathroom1True #kitchen,
+#scene.kitchenTrue #street,
+#scene.kitchenTrue #interior,
+#scene.kitchenTrue #bathroom1,
+#scene.kitchenTrue #room1,
+#scene.kitchenTrue #room2 {
+	display: none;
+}
+
+#scene.interiorTrue #interior,
+#scene.room1True #room1,
+#scene.room2True #room2,
+#scene.bathroom1True #bathroom1,
+#scene.kitchenTrue #kitchen {
+	display: block;
+}
+
+#exit-house,
+#exit-room1,
+#exit-room2,
+#exit-bathroom1,
+#exit-kitchen {
+	position: absolute;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 50px;
+	height: 50px;
+	background: url('assets/fleche-sortie.png') no-repeat center center;
+	background-size: contain;
+	cursor: pointer;
+	z-index: 3;
+}
