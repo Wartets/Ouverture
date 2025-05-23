@@ -8,6 +8,8 @@ const scene = document.getElementById('scene');
 const backgroundWidth = 1652;
 const backgroundHeight = 951;
 
+const githubURL = (name) => `https://raw.githubusercontent.com/Wartets/Ouverture/refs/heads/main/${name}`;
+
 const doors = new Map([
 	['doorInterior', { x: 896, y: 495, w: 74, h: 98, from: 'street', to: 'interior' }],
 	['doorRoom', { x: 1138, y: 237, w: 70, h: 130, from: 'interior', to: 'room' }],
@@ -46,10 +48,10 @@ const doors = new Map([
 
 const objects = new Map([
 	['cloud', { x: 407, y: 84, w: 562, h: 104, in: 'street', do: 'openwindow', variable: "oui, c'est un nuage" }],
-	['book', { x: 750, y: 520, w: 60, h: 80, in: 'room', do: 'openlink', variable: 'https://example.com' }],
+	['book', { x: 750, y: 520, w: 60, h: 80, in: 'room', do: 'openlink', variable: 'graphe.html' }],
 	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
-	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: 'https://www.myinstants.com/media/sounds/audio-lemons.mp3' }],
-	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: 'https://raw.githubusercontent.com/Wartets/Ouverture/refs/heads/main/assets/audios/oven.mp3' }]
+	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3') }],
+	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/oven.mp3') }]
 ]);
 
 const actions = {
@@ -169,7 +171,9 @@ function updateActiveLayer() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	const lastScene = localStorage.getItem('lastScene') || 'street';
+	const urlParams = new URLSearchParams(window.location.search);
+	const sceneFromUrl = urlParams.get('scene');
+	const lastScene = sceneFromUrl || localStorage.getItem('lastScene') || 'street';
 	
 	scene.classList.forEach(cls => {
 		if (cls.endsWith('True')) scene.classList.remove(cls);

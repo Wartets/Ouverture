@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Graphe des lieux</title>
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<style>
+	body { margin: 0; font-family: sans-serif; background: #111; color: #eee; }
+	svg { width: 100vw; height: 100vh; }
+	.link { stroke: #888; stroke-width: 1.5px; marker-end: url(#arrow); }
+	.node circle { fill: 'black'; }
+	text { fill: #fff; font-size: 12px; pointer-events: none; }
+	</style>
+</head>
+<body>
+	<svg></svg>
+	<script src="main-script.js"></script>
+	<script src="graph-script.js"></script>
+</body>
+</html>
