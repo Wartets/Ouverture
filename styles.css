@@ -45,7 +45,7 @@ html, body {
 .door,
 .object {
 	position: absolute;
-	background-color: rgba(255, 0, 0, 0.3);
+	background-color: rgba(255, 0, 0, 0.1);
 	cursor: pointer;
 	z-index: 2;
 	transition: background-color 0.2s ease;
@@ -63,7 +63,7 @@ html, body {
 	transform: translateX(-50%);
 	width: 50px;
 	height: 50px;
-	background: url('assets/fleche-sortie.png') no-repeat center center;
+	background: url('assets/icons/fleche-sortie.png') no-repeat center center;
 	background-size: contain;
 	cursor: pointer;
 	z-index: 3;
@@ -106,15 +106,18 @@ html, body {
 
 #letter-content {
 	position: relative;
-	background: white;
-	width: 600px;
-	max-width: 60vw;
+	background: rgba(255, 255, 216, 1);
+	width: auto;
+	max-width: 50vw;
+	max-height: 70vh;
 	padding: 40px;
 	color: #2c1c0f;
 	font-family: 'Courier New', monospace;
-	font-size: 18px;
+	font-size: 14px;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
 	cursor: default;
 	pointer-events: auto;
 	transform-origin: center center;
+	overflow-y: auto;
+	overflow-x: hidden;
 }

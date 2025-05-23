@@ -14,12 +14,13 @@ const doors = new Map([
 	['doorRoom2', { x: 1357, y: 204, w: 70, h: 135, from: 'interior', to: 'room2' }],
 	['doorRoom3', { x: 1585, y: 540, w: 130, h: 255, from: 'interior', to: 'room3' }],
 	['doorKitchen', { x: 538, y: 510, w: 100, h: 300, from: 'interior', to: 'kitchen' }],
-	['doorBathroom', { x: 1100, y: 490, w: 35, h: 270, from: 'room', to: 'Bathroom' }],
-	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'Bathroom' }],
-	['doorbathroomMirror', { x: 552, y: 490, w: 35, h: 270, from: 'Roommirror', to: 'bathroomMirror' }],
-	['doorbathroomMirror2', { x: 642, y: 330, w: 130, h: 250, from: 'Bathroom', to: 'bathroomMirror' }],
+	['doorBathroom', { x: 1100, y: 490, w: 35, h: 270, from: 'room', to: 'bathroom' }],
+	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'bathroom' }],
+	['doorbathroomMirror', { x: 552, y: 490, w: 35, h: 270, from: 'roomMirror', to: 'bathroomMirror' }],
+	['doorbathroomMirror2', { x: 642, y: 330, w: 130, h: 250, from: 'bathroom', to: 'bathroomMirror' }],
 	['doorLivingroom', { x: 1324, y: 480, w: 230, h: 240, from: 'interior', to: 'livingroom' }],
-	['doorSun', { x: 1235, y: 23, w: 95, h: 47, from: 'street', to: 'sun' }],
+	['doorGarden', { x: 1404, y: 424, w: 215, h: 656, from: 'kitchen', to: 'garden' }],
+	['doorSun', { x: 1234, y: 23, w: 95, h: 47, from: 'street', to: 'sun' }],
 	['doorStreet', { x: 768, y: 285, w: 26, h: 26, from: 'earthMap', to: 'street' }],
 	['doorEarthBall', { x: 826, y: 195, w: 25, h: 25, from: 'sun', to: 'earthBall' }],
 	['doorEarthBall2', { x: 359, y: 197, w: 150, h: 150, from: 'moon', to: 'earthBall' }],
@@ -31,8 +32,9 @@ const doors = new Map([
 	['exit-room2', { from: 'room2', to: 'interior' }],
 	['exit-room3', { from: 'room3', to: 'interior' }],
 	['exit-kitchen', { from: 'kitchen', to: 'interior' }],
-	['exit-Bathroom', { from: 'Bathroom', to: 'room' }],
-	['exit-bathroomMirror', { from: 'bathroomMirror', to: 'Roommirror' }],
+	['exit-garden', { from: 'garden', to: 'kitchen' }],
+	['exit-bathroom', { from: 'bathroom', to: 'room' }],
+	['exit-bathroomMirror', { from: 'bathroomMirror', to: 'roomMirror' }],
 	['exit-livingroom', { from: 'livingroom', to: 'interior' }],
 	['exit-sun', { from: 'sun', to: 'solarSystem' }],
 	['exit-solarSystem', { from: 'solarSystem', to: 'galaxy' }],
@@ -43,23 +45,25 @@ const doors = new Map([
 ]);
 
 const objects = new Map([
-	['cloud', { x: 407, y: 84, w: 562, h: 104, in: 'street', do: 'alert', message: "oui, c'est un nuage" }],
-	['book', { x: 750, y: 520, w: 60, h: 80, in: 'street', do: 'openlink', message: 'https://example.com' }],
-	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'street', do: 'openwindow', message: 'poem.txt' }],
+	['cloud', { x: 407, y: 84, w: 562, h: 104, in: 'street', do: 'openwindow', variable: "oui, c'est un nuage" }],
+	['book', { x: 750, y: 520, w: 60, h: 80, in: 'room', do: 'openlink', variable: 'https://example.com' }],
+	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
+	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: 'https://www.myinstants.com/media/sounds/audio-lemons.mp3' }],
+	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: 'https://www.chosic.com/download-audio/29261/' }]
 ]);
 
 const actions = {
 	alert: (msg) => alert(msg),
 	openlink: (url) => window.open(url, '_blank'),
-	openwindow: (message) => {
-		if (typeof message === 'string' && message.endsWith('.txt')) {
-			fetch(`assets/${message}`)
+	openwindow: (variable) => {
+		if (typeof variable === 'string' && variable.endsWith('.txt')) {
+			fetch(`https://raw.githubusercontent.com/Wartets/Ouverture/refs/heads/main/assets/poems/${encodeURIComponent(variable)}`)
 				.then(response => {
 					if (!response.ok) throw new Error('Fichier introuvable');
 					return response.text();
 				})
 				.then(text => actions.openwindow(text))
-				.catch(err => actions.openwindow(`[Erreur de chargement : ${err.message}]`));
+				.catch(err => actions.openwindow(`[Erreur de chargement : ${err.variable}]`));
 			return;
 		}
 
@@ -67,21 +71,29 @@ const actions = {
 		const content = document.getElementById('letter-content');
 		const backdrop = document.getElementById('letter-backdrop');
 
-		content.innerText = message;
+		content.innerText = variable;
 
-		const len = message.length;
-		const maxAngle = 6;
-		const angle = (Math.sin(len) + Math.cos(len * 0.5)) * maxAngle;
-
+		const len = variable.length;
+		const maxAngle = 5;
+		const angle = (Math.sin(len * Math.random()) + Math.cos(len * 5 * Math.random())) * maxAngle;
 		content.style.transform = `rotate(${angle.toFixed(2)}deg)`;
+
 		overlay.style.display = 'flex';
 
 		const closeLetter = () => {
 			overlay.style.display = 'none';
 			backdrop.removeEventListener('click', closeLetter);
 		};
-
 		backdrop.addEventListener('click', closeLetter);
+	},
+	playSound: (url) => {
+		const audio = new Audio(url);
+		audio.play().catch(err => {
+			console.error('Erreur lors de la lecture audio :', err, err.message);
+		});
+	},
+	customFunction: (fnName) => {
+	  if (typeof window[fnName] === 'function') window[fnName]();
 	}
 };
 
@@ -156,18 +168,6 @@ function updateActiveLayer() {
 	});
 }
 
-function onClick_book() {
-	alert("Tu as cliqué sur le livre !");
-}
-
-function onClick_cloud() {
-	alert("Oui, c'est un nuage");
-}
-
-function onClick_lamp() {
-	alert("La lampe s'allume !");
-}
-
 document.addEventListener('DOMContentLoaded', () => {
 	const lastScene = localStorage.getItem('lastScene') || 'street';
 	
@@ -208,11 +208,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (layer) layer.appendChild(obj);
 
 		obj.addEventListener('click', () => {
-			const action = actions[data.do];
-			if (typeof action === 'function') {
-				action(data.message);
+			const actionName = data.do;
+			const variable = data.variable;
+			
+			if (actionName === 'customFunction') {
+				actions.customFunction(variable);
 			} else {
-				console.warn(`Action "${data.do}" inconnue pour l’objet "${id}"`);
+				const action = actions[actionName];
+				if (typeof action === 'function') {
+					action(variable);
+				} else {
+					console.warn(`Action "${actionName}" inconnue pour l’objet "${id}"`);
+				}
 			}
 		});
 	}
@@ -225,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const id = layer.id;
 		const img = document.createElement('img');
 		img.id = `background-${id}`;
-		img.src = `assets/${id}.png`;
+		img.src = `assets/backgrounds/${id}.png`;
 		img.alt = `background of ${id}`;
 		img.style.pointerEvents = 'none';
 		img.onload = () => {
