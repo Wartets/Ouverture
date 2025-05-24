@@ -11,7 +11,7 @@ const backgroundHeight = 951;
 const githubURL = (name) => `https://raw.githubusercontent.com/Wartets/Ouverture/refs/heads/main/${name}`;
 
 const doors = new Map([
-	['doorInterior', { x: 896, y: 495, w: 74, h: 98, from: 'exterior', to: 'interior' }],
+	['doorInterior', { x: 930, y: 475, w: 55, h: 105, from: 'exterior', to: 'interior' }],
 	['doorRoom', { x: 1138, y: 237, w: 70, h: 130, from: 'interior', to: 'room' }],
 	['doorRoom2', { x: 1357, y: 204, w: 70, h: 135, from: 'interior', to: 'room2' }],
 	['doorRoom3', { x: 1585, y: 540, w: 130, h: 255, from: 'interior', to: 'room3' }],
@@ -24,16 +24,16 @@ const doors = new Map([
 	['doorGarden', { x: 1404, y: 424, w: 215, h: 656, from: 'kitchen', to: 'garden' }],
 	['doorGarden2', { x: 39, y: 633, w: 78, h: 540, from: 'garden', to: 'kitchen' }],
 	['doorGarden3', { x: 500, y: 500, w: 100, h: 100, from: 'livingroom', to: 'garden' }],
-	['doorSun', { x: 1234, y: 23, w: 95, h: 47, from: 'exterior', to: 'sun' }],
+	['doorSun', { x: 1234, y: 27, w: 95, h: 58, from: 'exterior', to: 'sun' }],
 	['doorSun2', { x: 1215, y: 42, w: 131, h: 84, from: 'garden', to: 'sun' }],
 	['doorExterior', { x: 768, y: 285, w: 26, h: 26, from: 'earthMap', to: 'exterior' }],
 	['doorEarthBall', { x: 826, y: 195, w: 25, h: 25, from: 'sun', to: 'earthBall' }],
 	
 	['doorGarage', { x: 500, y: 500, w: 50, h: 120, from: 'room3', to: 'garage' }],
 	['doorAlley', { x: 500, y: 500, w: 50, h: 120, from: 'garage', to: 'alley' }],
-	['doorExterior2', { x: 400, y: 195, w: 50, h: 120, from: 'alley', to: 'exterior' }],
-	['doorGarden4', { x: 800, y: 195, w: 50, h: 120, from: 'alley', to: 'garden' }],
-	['doorAlley2', { x: 246, y: 545, w: 20, h: 250, from: 'garden', to: 'alley' }],
+	['doorExterior2', { x: 104, y: 500, w: 70, h: 90, from: 'alley', to: 'garden' }],
+	['doorGarden4', { x: 1508, y: 500, w: 80, h: 100, from: 'alley', to: 'exterior' }],
+	/* ['doorAlley2', { x: 246, y: 545, w: 20, h: 250, from: 'garden', to: 'alley' }], */
 	
 	['doorSun3', { x: 200, y: 200, w: 70, h: 70, from: 'solarSystem', to: 'sun' }],
 	['doorMercuryBall', { x: 300, y: 200, w: 10, h: 10, from: 'solarSystem', to: 'mercuryBall' }],
@@ -99,7 +99,7 @@ const doors = new Map([
 ]);
 
 const objects = new Map([
-	['cloud', { x: 407, y: 84, w: 562, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage" }],
+	['cloud', { x: 414, y: 84, w: 420, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage" }],
 	['book', { x: 750, y: 520, w: 60, h: 80, in: 'roomMirror', do: 'openlink', variable: 'graphe.html' }],
 	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
 	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3') }],
@@ -297,6 +297,19 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		resolve();
 		};
+
+		img.onerror = () => {
+			console.warn(`Image manquante pour ${id}, chargement de backgroundError.png`);
+			img.src = `assets/backgrounds/backgroundError.png`;
+
+			img.onload = () => {
+				if (scene.classList.contains(`${id}True`)) {
+					currentBackgroundImage = img;
+				}
+				resolve();
+			};
+		};
+
 		layer.insertBefore(img, layer.firstChild);
 	});
 
