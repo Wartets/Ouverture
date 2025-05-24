@@ -103,7 +103,8 @@ const objects = new Map([
 	['book', { x: 750, y: 520, w: 60, h: 80, in: 'roomMirror', do: 'openlink', variable: 'graphe.html' }],
 	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
 	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3') }],
-	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/oven.mp3') }]
+	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/oven.mp3') }],
+	['book1', { x: 349, y: 790, w: 70, h: 100, in: 'interior', do: 'openbook', variable: githubURL('assets/book/book1/') }]
 ]);
 
 const actions = {
@@ -147,7 +148,56 @@ const actions = {
 		});
 	},
 	customFunction: (fnName) => {
-	  if (typeof window[fnName] === 'function') window[fnName]();
+		if (typeof window[fnName] === 'function') window[fnName]();
+	},
+	openbook: (baseUrl) => {
+		const overlay = document.getElementById('book-overlay');
+		const pageImage = document.getElementById('book-page');
+		const backdrop = document.getElementById('book-backdrop');
+		const prevButton = document.getElementById('prev-page');
+		const nextButton = document.getElementById('next-page');
+
+		let pageIndex = 1;
+
+		const showPage = async () => {
+		const url = `${baseUrl}page${pageIndex}.png`;
+		const exists = await fetch(url, { method: 'HEAD' }).then(res => res.ok).catch(() => false);
+
+		if (!exists) {
+			if (pageIndex > 1) pageIndex--; // Revenir à la dernière page valide
+			return;
+		}
+
+		pageImage.src = url;
+		};
+
+		const close = () => {
+		overlay.style.display = 'none';
+		backdrop.removeEventListener('click', close);
+		};
+
+		prevButton.onclick = () => {
+		if (pageIndex > 1) {
+			pageIndex--;
+			showPage();
+		}
+		};
+
+		nextButton.onclick = async () => {
+		pageIndex++;
+		const url = `${baseUrl}page${pageIndex}.png`;
+		const exists = await fetch(url, { method: 'HEAD' }).then(res => res.ok).catch(() => false);
+		if (exists) {
+			showPage();
+		} else {
+			pageIndex--; // Revenir à la dernière valide
+		}
+		};
+
+		backdrop.addEventListener('click', close);
+		overlay.style.display = 'flex';
+		pageIndex = 1;
+		showPage();
 	}
 };
 
