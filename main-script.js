@@ -104,7 +104,7 @@ const objects = new Map([
 	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
 	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3') }],
 	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/oven.mp3') }],
-	['book1', { x: 349, y: 790, w: 70, h: 100, in: 'interior', do: 'openbook', variable: githubURL('assets/book/book1/') }]
+	['book1', { x: 349, y: 790, w: 70, h: 100, in: 'interior', do: 'openbook', variable: githubURL('assets/books/book1/') }]
 ]);
 
 const actions = {
