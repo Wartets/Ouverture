@@ -28,24 +28,28 @@
 <body>
 	<div id="coordDisplay"></div>
 	<div id="scene" class=""></div>
-	
+
 	<div id="letter-overlay" style="display:none;">
 		<div id="letter-backdrop"></div>
 		<div id="letter-content"></div>
 	</div>
-	
+
 	<div id="book-overlay" style="display:none;">
 		<div id="book-backdrop"></div>
 		<div id="book-window">
-			<img id="book-page" src="" alt="Page du livre">
+			<div id="book-pages">
+				<img id="left-page" class="book-page" src="" alt="Page gauche">
+				<img id="right-page" class="book-page" src="" alt="Page droite">
+			</div>
 			<div id="book-controls">
-				<button id="prev-page">‹</button>
-				<button id="next-page">›</button>
+				<button id="prev-page" class="book-arrow">‹</button>
+				<button id="next-page" class="book-arrow">›</button>
 			</div>
 		</div>
 	</div>
 
 	<script src="main-script.js"></script>
 	<script src="hud.js"></script>
+
 </body>
 </html>

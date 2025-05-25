@@ -152,53 +152,73 @@ const actions = {
 	},
 	openbook: (baseUrl) => {
 		const overlay = document.getElementById('book-overlay');
-		const pageImage = document.getElementById('book-page');
 		const backdrop = document.getElementById('book-backdrop');
+		const bookWindow = document.getElementById('book-window');
+		const leftPage = document.getElementById('left-page');
+		const rightPage = document.getElementById('right-page');
 		const prevButton = document.getElementById('prev-page');
 		const nextButton = document.getElementById('next-page');
 
 		let pageIndex = 1;
 
-		const showPage = async () => {
-		const url = `${baseUrl}page${pageIndex}.png`;
-		const exists = await fetch(url, { method: 'HEAD' }).then(res => res.ok).catch(() => false);
+		const preloadImage = (url) => {
+			const img = new Image();
+			img.src = url;
+		};
 
-		if (!exists) {
-			if (pageIndex > 1) pageIndex--; // Revenir à la dernière page valide
-			return;
-		}
+		const checkImageExists = (url) =>
+			fetch(url, { method: 'HEAD' }).then(res => res.ok).catch(() => false);
 
-		pageImage.src = url;
+		const showPages = async () => {
+			const leftUrl = `${baseUrl}page${pageIndex}.jpg`;
+			const rightUrl = `${baseUrl}page${pageIndex + 1}.jpg`;
+			const nextLeftUrl = `${baseUrl}page${pageIndex + 2}.jpg`;
+			const prevLeftUrl = `${baseUrl}page${pageIndex - 2}.jpg`;
+
+			const [leftExists, rightExists, nextExists, prevExists] = await Promise.all([
+				checkImageExists(leftUrl),
+				checkImageExists(rightUrl),
+				checkImageExists(nextLeftUrl),
+				pageIndex > 2 ? checkImageExists(prevLeftUrl) : Promise.resolve(false),
+			]);
+
+			// Si la page gauche n’existe pas, on ne fait rien
+			if (!leftExists) return;
+
+			leftPage.src = leftUrl;
+			rightPage.src = rightExists ? rightUrl : '';
+			if (rightExists) preloadImage(nextLeftUrl);
+
+			// Affichage conditionnel des boutons
+			prevButton.style.display = pageIndex > 2 && prevExists ? 'block' : 'none';
+			nextButton.style.display = nextExists ? 'block' : 'none';
 		};
 
 		const close = () => {
-		overlay.style.display = 'none';
-		backdrop.removeEventListener('click', close);
+			overlay.style.display = 'none';
+			backdrop.removeEventListener('click', close);
 		};
 
 		prevButton.onclick = () => {
-		if (pageIndex > 1) {
-			pageIndex--;
-			showPage();
-		}
+			if (pageIndex > 2) {
+				pageIndex -= 2;
+				showPages();
+			}
 		};
 
-		nextButton.onclick = async () => {
-		pageIndex++;
-		const url = `${baseUrl}page${pageIndex}.png`;
-		const exists = await fetch(url, { method: 'HEAD' }).then(res => res.ok).catch(() => false);
-		if (exists) {
-			showPage();
-		} else {
-			pageIndex--; // Revenir à la dernière valide
-		}
+		nextButton.onclick = () => {
+			pageIndex += 2;
+			showPages();
 		};
+
+		const angle = (Math.random() - 0.5) * 10;
+		bookWindow.style.transform = `rotate(${angle.toFixed(2)}deg)`;
 
 		backdrop.addEventListener('click', close);
 		overlay.style.display = 'flex';
 		pageIndex = 1;
-		showPage();
-	}
+		showPages();
+	},
 };
 
 const allSceneNames = (() => {

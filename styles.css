@@ -74,10 +74,6 @@ html, body {
 	filter: brightness(0.7);
 }
 
-.scene-layer {
-	display: none;
-}
-
 .scene-layer.active {
 	display: block;
 }
@@ -120,6 +116,7 @@ html, body {
 	transform-origin: center center;
 	overflow-y: auto;
 	overflow-x: hidden;
+	pointer-events: none;
 }
 
 #book-overlay {
@@ -130,6 +127,7 @@ html, body {
 	align-items: center;
 	justify-content: center;
 	z-index: 1000;
+	pointer-events: auto;
 }
 
 #book-backdrop {
@@ -139,24 +137,67 @@ html, body {
 
 #book-window {
 	position: relative;
-	background: white;
-	padding: 20px;
-	max-width: 80vw;
-	max-height: 80vh;
+	background: #fff;
+	padding: 10px 20px;
 	box-shadow: 0 0 20px black;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	transform-origin: center center;
+	width: auto;
+	max-width: 75vw;
+	max-height: 70vh;
 }
 
-#book-page {
-	max-width: 100%;
-	max-height: 60vh;
-	margin-bottom: 10px;
+#book-pages {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: nowrap;
+	pointer-events: none;
+}
+
+.book-page {
+	width: 297px;
+	height: 420px;
+	padding: 10px;
+	background: transparent;
+	box-sizing: border-box;
+	object-fit: contain;
+	overflow: hidden;
 }
 
 #book-controls {
+	margin-top: 10px;
 	display: flex;
-	justify-content: space-between;
-	width: 100px;
+	gap: 10px;
+}
+
+.book-arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 20px;
+	height: 20px;
+	border: none;
+	background-color: transparent;
+	color: #000;
+	font-size: 40px;
+	font-weight: bold;
+	cursor: pointer;
+	z-index: 10;
+	transition: color 0.2s ease;
+}
+
+.book-arrow:hover {
+	color: #444;
+}
+
+#prev-page.book-arrow {
+	left: -30px;
+}
+
+#next-page.book-arrow {
+	right: -30px;
 }
