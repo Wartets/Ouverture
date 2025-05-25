@@ -4,11 +4,12 @@ let resizeScheduled = false;
 
 const scene = document.getElementById('scene');
 
-// Actual sizes of backgrounds (en px)
-const backgroundWidth = 1652;
+const backgroundWidth = 1652; // Actual sizes of backgrounds (px)
 const backgroundHeight = 951;
 
 const githubURL = (name) => `https://raw.githubusercontent.com/Wartets/Ouverture/refs/heads/main/${name}`;
+
+const activeAudios = [];
 
 const doors = new Map([
 	['doorInterior', { x: 930, y: 475, w: 55, h: 105, from: 'exterior', to: 'interior' }],
@@ -17,6 +18,7 @@ const doors = new Map([
 	['doorRoom3', { x: 1585, y: 540, w: 130, h: 255, from: 'interior', to: 'room3' }],
 	['doorKitchen', { x: 538, y: 510, w: 100, h: 300, from: 'interior', to: 'kitchen' }],
 	['doorBathroom', { x: 1100, y: 490, w: 35, h: 270, from: 'room', to: 'bathroom' }],
+	['doorBathroom3', { x: 1600, y: 490, w: 100, h: 440, from: 'room2', to: 'bathroom2' }],
 	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'bathroom' }],
 	['doorbathroomMirror', { x: 552, y: 490, w: 35, h: 270, from: 'roomMirror', to: 'bathroomMirror' }],
 	['doorbathroom2Mirror', { x: 642, y: 330, w: 130, h: 250, from: 'bathroom', to: 'bathroomMirror' }],
@@ -35,21 +37,33 @@ const doors = new Map([
 	['doorGarden4', { x: 1508, y: 500, w: 80, h: 100, from: 'alley', to: 'exterior' }],
 	/* ['doorAlley2', { x: 246, y: 545, w: 20, h: 250, from: 'garden', to: 'alley' }], */
 	
-	['doorSun3', { x: 200, y: 200, w: 70, h: 70, from: 'solarSystem', to: 'sun' }],
-	['doorMercuryBall', { x: 300, y: 200, w: 10, h: 10, from: 'solarSystem', to: 'mercuryBall' }],
-	['doorVenusBall', { x: 400, y: 200, w: 17, h: 17, from: 'solarSystem', to: 'venusBall' }],
-	['doorEarthBall3', { x: 500, y: 200, w: 25, h: 25, from: 'solarSystem', to: 'earthBall' }],
-	['doorMarsBall', { x: 600, y: 200, w: 20, h: 20, from: 'solarSystem', to: 'marsBall' }],
-	['doorJupiterBall', { x: 750, y: 200, w: 45, h: 45, from: 'solarSystem', to: 'jupiterBall' }],
-	['doorSaturnBall', { x: 850, y: 200, w: 40, h: 40, from: 'solarSystem', to: 'saturnBall' }],
-	['doorUranusBall', { x: 950, y: 200, w: 35, h: 35, from: 'solarSystem', to: 'uranusBall' }],
-	['doorNeptuneBall', { x: 1050, y: 200, w: 35, h: 35, from: 'solarSystem', to: 'neptuneBall' }],
+	['doorCar', { x: 194, y: 626, w: 110, h: 80, from: 'exterior', to: 'car' }],
+	['doorTownMap', { x: 829, y: 363, w: 148, h: 75, from: 'car', to: 'townMap' }],
+	['doorExterior2', { x: 100, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior2' }],
+	['doorExterior3', { x: 200, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior3' }],
+	['doorExterior4', { x: 300, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior4' }],
+	['doorExterior5', { x: 400, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior5' }],
+	['doorExterior6', { x: 500, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior6' }],
+	['doorExterior7', { x: 600, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior7' }],
+	['doorExterior8', { x: 700, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior8' }],
+	
+	['doorSun3', { x: 172, y: 473, w: 594, h: 594, from: 'solarSystem', to: 'sun' }],
+	['doorMercuryBall', { x: 624, y: 473, w: 3, h: 3, from: 'solarSystem', to: 'mercuryBall' }],
+	['doorVenusBall', { x: 726, y: 474, w: 4, h: 4, from: 'solarSystem', to: 'venusBall' }],
+	['doorEarthBall3', { x: 827, y: 474, w: 5, h: 5, from: 'solarSystem', to: 'earthBall' }],
+	['doorMarsBall', { x: 926, y: 474, w: 5, h: 5, from: 'solarSystem', to: 'marsBall' }],
+	['doorJupiterBall', { x: 1079, y: 473, w: 68, h: 68, from: 'solarSystem', to: 'jupiterBall' }],
+	['doorSaturnBall', { x: 1278, y: 473, w: 56, h: 56, from: 'solarSystem', to: 'saturnBall' }],
+	['doorUranusBall', { x: 1454, y: 473, w: 24, h: 24, from: 'solarSystem', to: 'uranusBall' }],
+	['doorNeptuneBall', { x: 1580, y: 473, w: 18, h: 18, from: 'solarSystem', to: 'neptuneBall' }],
 	
 	['doorMercury', { x: 826, y: 500, w: 400, h: 400, from: 'mercuryBall', to: 'mercury' }],
 	['doorVenus', { x: 826, y: 500, w: 400, h: 400, from: 'venusBall', to: 'venus' }],
 	['doorMars', { x: 826, y: 500, w: 400, h: 400, from: 'marsBall', to: 'mars' }],
 	['doorJupiter', { x: 826, y: 500, w: 400, h: 400, from: 'jupiterBall', to: 'jupiter' }],
 	['doorSaturn', { x: 826, y: 500, w: 400, h: 400, from: 'saturnBall', to: 'saturn' }],
+	['doorSaturn2', { x: 826, y: 500, w: 400, h: 400, from: 'saturnRing', to: 'saturn' }],
+	['doorSaturnRing', { x: 1200, y: 500, w: 300, h: 300, from: 'saturnBall', to: 'saturnRing' }],
 	['doorUranus', { x: 826, y: 500, w: 400, h: 400, from: 'uranusBall', to: 'uranus' }],
 	['doorNeptune', { x: 826, y: 500, w: 400, h: 400, from: 'neptuneBall', to: 'neptune' }],
 	
@@ -62,6 +76,8 @@ const doors = new Map([
 	['doorGalaxy', { x: 500, y: 500, w: 50, h: 50, from: 'localGroup', to: 'galaxy' }],
 	['doorSolarSystem', { x: 500, y: 500, w: 50, h: 50, from: 'galaxy', to: 'solarSystem' }],
 	['doorForest', { x: 1113, y: 566, w: 80, h: 160, from: 'garden', to: 'forest' }],
+	['doorForest2', { x: 1350, y: 470, w: 50, h: 60, from: 'exterior', to: 'forest' }],
+	['doorAntarctica', { x: 824, y: 910, w: 1200, h: 70, from: 'earthMap', to: 'antarctica' }],
 	
 	['exit-interior', { from: 'interior', to: 'exterior' }],
 	['exit-room', { from: 'room', to: 'interior' }],
@@ -69,6 +85,7 @@ const doors = new Map([
 	['exit-room3', { from: 'room3', to: 'interior' }],
 	['exit-kitchen', { from: 'kitchen', to: 'interior' }],
 	['exit-bathroom', { from: 'bathroom', to: 'room' }],
+	['exit-bathroom2', { from: 'bathroom2', to: 'room2' }],
 	['exit-bathroomMirror', { from: 'bathroomMirror', to: 'roomMirror' }],
 	['exit-livingroom', { from: 'livingroom', to: 'interior' }],
 	['exit-sun', { from: 'sun', to: 'solarSystem' }],
@@ -80,12 +97,24 @@ const doors = new Map([
 	['exit-forest', { from: 'forest', to: 'garden' }],
 	['exit-garage', { from: 'garage', to: 'room3' }],
 	['exit-alley', { from: 'alley', to: 'garage' }],
+	['exit-car', { from: 'car', to: 'exterior' }],
+	['exit-antarctica', { from: 'antarctica', to: 'earthMap' }],
+	
+	['exit-townMap', { from: 'townMap', to: 'earthMap' }],
+	['exit-exterior2', { from: 'exterior2', to: 'townMap' }],
+	['exit-exterior3', { from: 'exterior3', to: 'townMap' }],
+	['exit-exterior4', { from: 'exterior4', to: 'townMap' }],
+	['exit-exterior5', { from: 'exterior5', to: 'townMap' }],
+	['exit-exterior6', { from: 'exterior6', to: 'townMap' }],
+	['exit-exterior7', { from: 'exterior7', to: 'townMap' }],
+	['exit-exterior8', { from: 'exterior8', to: 'townMap' }],
 	
 	['exit-mercury', { from: 'mercury', to: 'mercuryBall' }],
 	['exit-venus', { from: 'venus', to: 'venusBall' }],
 	['exit-mars', { from: 'mars', to: 'marsBall' }],
 	['exit-jupiter', { from: 'jupiter', to: 'jupiterBall' }],
 	['exit-saturn', { from: 'saturn', to: 'saturnBall' }],
+	['exit-saturnRing', { from: 'saturnRing', to: 'saturnBall' }],
 	['exit-uranus', { from: 'uranus', to: 'uranusBall' }],
 	['exit-neptune', { from: 'neptune', to: 'neptuneBall' }],
 	
@@ -101,10 +130,11 @@ const doors = new Map([
 const objects = new Map([
 	['cloud', { x: 414, y: 84, w: 420, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage" }],
 	['book', { x: 750, y: 520, w: 60, h: 80, in: 'roomMirror', do: 'openlink', variable: 'graphe.html' }],
-	['lamp', { x: 300, y: 400, w: 40, h: 100, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
+	['poem', { x: 300, y: 500, w: 40, h: 40, in: 'interior', do: 'openwindow', variable: 'Amis.txt' }],
 	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3') }],
 	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/oven.mp3') }],
-	['book1', { x: 349, y: 790, w: 70, h: 100, in: 'interior', do: 'openbook', variable: githubURL('assets/books/book1/') }]
+	['book1', { x: 10, y: 701, w: 20, h: 12, in: 'room2', do: 'openbook', variable: githubURL('assets/books/book1/') }],
+	['penguin', { x: 1277, y: 586, w: 55, h: 86, in: 'antarctica', do: 'playSound', variable: githubURL('assets/audios/penguin.mp3') }],
 ]);
 
 const actions = {
@@ -143,8 +173,9 @@ const actions = {
 	},
 	playSound: (url) => {
 		const audio = new Audio(url);
+		activeAudios.push(audio);
 		audio.play().catch(err => {
-			console.error('Erreur lors de la lecture audio :', err, err.message);
+			console.error('Erreur lors de la lecture audio :', err.message);
 		});
 	},
 	customFunction: (fnName) => {
@@ -182,14 +213,12 @@ const actions = {
 				pageIndex > 2 ? checkImageExists(prevLeftUrl) : Promise.resolve(false),
 			]);
 
-			// Si la page gauche n’existe pas, on ne fait rien
 			if (!leftExists) return;
 
 			leftPage.src = leftUrl;
 			rightPage.src = rightExists ? rightUrl : '';
 			if (rightExists) preloadImage(nextLeftUrl);
 
-			// Affichage conditionnel des boutons
 			prevButton.style.display = pageIndex > 2 && prevExists ? 'block' : 'none';
 			nextButton.style.display = nextExists ? 'block' : 'none';
 		};
@@ -229,6 +258,14 @@ const allSceneNames = (() => {
 	});
 	return names;
 })();
+
+function stopAllSounds() {
+	activeAudios.forEach(audio => {
+		audio.pause();
+		audio.currentTime = 0;
+	});
+	activeAudios.length = 0;
+}
 
 function getDisplayMetrics() {
 	const windowRatio = window.innerWidth / window.innerHeight;
@@ -290,6 +327,8 @@ function updateActiveLayer() {
 	document.querySelectorAll('.scene-layer').forEach(layer => {
 		layer.classList.toggle('active', layer.id === activeId);
 	});
+	
+	stopAllSounds();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
