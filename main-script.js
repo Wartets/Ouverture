@@ -19,7 +19,7 @@ const doors = new Map([
 	['doorKitchen', { x: 538, y: 510, w: 100, h: 300, from: 'interior', to: 'kitchen' }],
 	['doorBathroom', { x: 1100, y: 490, w: 35, h: 270, from: 'room', to: 'bathroom' }],
 	['doorToiletHole', { x: 820, y: 665, w: 90, h: 27, from: 'bathroom', to: 'toiletHole' }],
-	['doorSewers', { x: 826, y: 500, w: 150, h: 150, from: 'bathroom', to: 'sewers' }],
+	['doorSewers', { x: 826, y: 500, w: 150, h: 150, from: 'toiletHole', to: 'sewers' }],
 	['doorBathroom3', { x: 1600, y: 490, w: 100, h: 440, from: 'room2', to: 'bathroom2' }],
 	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'bathroom' }],
 	['doorbathroomMirror', { x: 552, y: 490, w: 35, h: 270, from: 'roomMirror', to: 'bathroomMirror' }],
@@ -42,6 +42,7 @@ const doors = new Map([
 	
 	['doorCar', { x: 194, y: 626, w: 110, h: 80, from: 'exterior', to: 'car' }],
 	['doorTownMap', { x: 829, y: 363, w: 148, h: 75, from: 'car', to: 'townMap' }],
+	['doorExterior12', { x: 100, y: 250, w: 90, h: 90, from: 'townMap', to: 'exterior' }],
 	['doorExterior2', { x: 100, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior2' }],
 	['doorExterior3', { x: 200, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior3' }],
 	['doorExterior4', { x: 300, y: 50, w: 90, h: 90, from: 'townMap', to: 'exterior4' }],
