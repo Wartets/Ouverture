@@ -49,14 +49,12 @@ html, body {
 	box-shadow: none;
 	cursor: pointer;
 	z-index: 2;
-	border-radius: 8px;
-	transition: background-color box-shadow 0.2s ease;
+	transition: background-color 0.2s ease;
 }
 
 .door:hover,
 .object:hover {
 	background-color: rgba(12, 15, 11, 0.1);
-	/* box-shadow: 0 0 5px rgba(120, 150, 110, 0.2); */
 }
 
 .exit {

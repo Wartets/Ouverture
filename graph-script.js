@@ -4,13 +4,6 @@ const links = [];
 let collapsed = false;
 expandHud();
 
-function formatSceneName(name) {
-	return name
-		.replace(/([A-Z])/g, ' $1')
-		.toLowerCase()
-		.replace(/^./, c => c.toUpperCase())
-}
-
 for (const { from, to } of doors.values()) {
 	if (!nodesMap.has(from)) nodesMap.set(from, { id: from });
 	if (!nodesMap.has(to)) nodesMap.set(to, { id: to });

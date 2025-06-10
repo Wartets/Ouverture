@@ -2,6 +2,8 @@ let readyForPlacement = false;
 let currentBackgroundImage = null;
 let resizeScheduled = false;
 
+const EXTRAINF = true;
+
 const scene = document.getElementById('scene');
 
 const backgroundWidth = 1652; // Actual sizes of backgrounds (px)
@@ -9,31 +11,39 @@ const backgroundHeight = 951;
 
 const githubURL = (name) => `https://raw.githubusercontent.com/Wartets/Ouverture/refs/heads/main/${name}`;
 
+function formatSceneName(name) {
+	return name
+		.replace(/([A-Z])/g, ' $1')
+		.replace(/([0-9])/g, ' $1')
+		.toLowerCase()
+		.replace(/^./, c => c.toUpperCase())
+}
+
 const activeAudios = [];
 
 const doors = new Map([
-	['doorInterior', { x: 930, y: 475, w: 55, h: 105, from: 'exterior', to: 'interior' }],
+	['doorInterior', { x: 930, y: 475, w: 55, h: 105, from: 'exterior', to: 'interior', radius: '0px', rotate: 0, tooltip: `Porte d'entrée principale` }],
 	['doorRoom', { x: 1138, y: 237, w: 70, h: 130, from: 'interior', to: 'room' }],
 	['doorRoom2', { x: 1293, y: 208, w: 80, h: 135, from: 'interior', to: 'room2' }],
 	['doorRoom3', { x: 1585, y: 540, w: 130, h: 255, from: 'interior', to: 'room3' }],
 	['doorRoom4', { x: 1420, y: 196, w: 10, h: 150, from: 'interior', to: 'room4' }],
-	['doorInterior1a', { x: 684, y: 804, w: 80, h: 130, from: 'room4', to: 'interior' }],
+	['doorInterior1a', { x: 684, y: 804, w: 80, h: 130, from: 'room4', to: 'interior', rotate: 20 }],
 	['doorKitchen', { x: 538, y: 510, w: 100, h: 300, from: 'interior', to: 'kitchen' }],
 	['doorBathroom', { x: 1100, y: 490, w: 35, h: 270, from: 'room', to: 'bathroom' }],
 	['doorToiletHole', { x: 820, y: 665, w: 90, h: 27, from: 'bathroom', to: 'toiletHole' }],
 	['doorSewers', { x: 826, y: 500, w: 150, h: 150, from: 'toiletHole', to: 'sewers' }],
 	['doorBathroom3', { x: 1600, y: 490, w: 100, h: 440, from: 'room2', to: 'bathroom2' }],
-	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'bathroom' }],
+	['doorBathroom2', { x: 1018, y: 330, w: 130, h: 250, from: 'bathroomMirror', to: 'bathroom', radius: '20px' }],
 	['doorbathroomMirror', { x: 552, y: 490, w: 35, h: 270, from: 'roomMirror', to: 'bathroomMirror' }],
-	['doorbathroom2Mirror', { x: 642, y: 330, w: 130, h: 250, from: 'bathroom', to: 'bathroomMirror' }],
+	['doorbathroom2Mirror', { x: 642, y: 330, w: 130, h: 250, from: 'bathroom', to: 'bathroomMirror', radius: '20px' }],
 	['doorLivingroom', { x: 1324, y: 480, w: 230, h: 240, from: 'interior', to: 'livingroom' }],
 	['doorGarden', { x: 1404, y: 424, w: 215, h: 656, from: 'kitchen', to: 'garden' }],
 	['doorGarden2', { x: 39, y: 633, w: 78, h: 540, from: 'garden', to: 'kitchen' }],
 	['doorGarden3', { x: 500, y: 500, w: 100, h: 100, from: 'livingroom', to: 'garden' }],
-	['doorSun', { x: 1234, y: 27, w: 95, h: 58, from: 'exterior', to: 'sun' }],
-	['doorSun2', { x: 1215, y: 42, w: 131, h: 84, from: 'garden', to: 'sun' }],
-	['doorExterior', { x: 768, y: 285, w: 26, h: 26, from: 'earthMap', to: 'exterior' }],
-	['doorEarthBall', { x: 826, y: 195, w: 25, h: 25, from: 'sun', to: 'earthBall' }],
+	['doorSun', { x: 1234, y: 11, w: 95, h: 95, from: 'exterior', to: 'sun', radius: '500px' }],
+	['doorSun2', { x: 1213, y: 37, w: 131, h: 99, from: 'garden', to: 'sun', radius: '500px' }],
+	['doorExterior', { x: 768, y: 285, w: 20, h: 20, from: 'earthMap', to: 'exterior', radius: '500px' }],
+	['doorEarthBall', { x: 826, y: 195, w: 25, h: 25, from: 'sun', to: 'earthBall', radius: '26px' }],
 	
 	['doorGarage', { x: 500, y: 500, w: 50, h: 120, from: 'room3', to: 'garage' }],
 	['doorCellar', { x: 100, y: 500, w: 50, h: 120, from: 'garage', to: 'cellar' }],
@@ -45,7 +55,7 @@ const doors = new Map([
 	['doorCar', { x: 320, y: 718, w: 400, h: 280, from: 'exterior', to: 'car' }],
 	['doorTownMap', { x: 829, y: 363, w: 148, h: 75, from: 'car', to: 'townMap' }],
 	
-	['doorExteriorHighschool', { x: 1415, y: 55, w: 180, h: 60, from: 'townMap', to: 'exteriorHighschool' }],
+	['doorExteriorHighschool', { x: 1415, y: 55, w: 180, h: 60, from: 'townMap', to: 'exteriorHighschool', rotate: 30 }],
 	['doorExterior2', { x: 1568, y: 205, w: 50, h: 50, from: 'townMap', to: 'exterior2' }],
 	['doorExterior3', { x: 1104, y: 67, w: 50, h: 50, from: 'townMap', to: 'exterior3' }],
 	['doorExterior4', { x: 1208, y: 132, w: 50, h: 50, from: 'townMap', to: 'exterior4' }],
@@ -66,29 +76,29 @@ const doors = new Map([
 	['doorExteriorWarehouse', { x: 626, y: 72, w: 190, h: 100, from: 'townMap', to: 'exteriorWarehouse' }],
 	['doorExterior19', { x: 961, y: 263, w: 50, h: 50, from: 'townMap', to: 'exterior19' }],
 	['doorExterior20', { x: 1101, y: 343, w: 50, h: 50, from: 'townMap', to: 'exterior20' }],
-	['doorExteriorMosque', { x: 1200, y: 416, w: 50, h: 50, from: 'townMap', to: 'exteriorMosque' }],
+	['doorExteriorMosque', { x: 1200, y: 416, w: 140, h: 90, from: 'townMap', to: 'exteriorMosque', rotate: 30, radius: '30px' }],
 	['doorExterior21', { x: 820, y: 237, w: 50, h: 50, from: 'townMap', to: 'exterior21' }],
 	['doorExterior22', { x: 907, y: 297, w: 50, h: 50, from: 'townMap', to: 'exterior22' }],
 	['doorExteriorShops', { x: 745, y: 312, w: 50, h: 50, from: 'townMap', to: 'exteriorShops' }],
 	['doorExteriorNightclub', { x: 825, y: 358, w: 50, h: 50, from: 'townMap', to: 'exteriorNightclub' }],
-	['doorExteriorMall', { x: 982, y: 394, w: 50, h: 50, from: 'townMap', to: 'exteriorMall' }],
-	['doorExteriorWorkshop', { x: 1063, y: 494, w: 150, h: 80, from: 'townMap', to: 'exteriorWorkshop' }],
+	['doorExteriorMall', { x: 982, y: 394, w: 150, h: 90, from: 'townMap', to: 'exteriorMall', rotate: -30, radius: '10px' }],
+	['doorExteriorWorkshop', { x: 1063, y: 494, w: 150, h: 80, from: 'townMap', to: 'exteriorWorkshop', rotate: 30 }],
 	['doorExteriorCastel', { x: 1343, y: 557, w: 80, h: 100, from: 'townMap', to: 'exteriorCastel' }],
-	['doorExteriorMovieTheater', { x: 602, y: 370, w: 50, h: 50, from: 'townMap', to: 'exteriorMovieTheater' }],
+	['doorExteriorMovieTheater', { x: 602, y: 380, w: 100, h: 75, from: 'townMap', to: 'exteriorMovieTheater', rotate: 33 }],
 	['doorExterior23', { x: 706, y: 448, w: 50, h: 50, from: 'townMap', to: 'exterior23' }],
 	['doorExterior24', { x: 883, y: 530, w: 50, h: 50, from: 'townMap', to: 'exterior24' }],
-	['doorExteriorPoliceStation', { x: 936, y: 574, w: 50, h: 50, from: 'townMap', to: 'exteriorPoliceStation' }],
+	['doorExteriorPoliceStation', { x: 941, y: 579, w: 100, h: 50, from: 'townMap', to: 'exteriorPoliceStation', rotate: 33 }],
 	['doorVineyard', { x: 124, y: 188, w: 150, h: 150, from: 'townMap', to: 'vineyard' }],
-	['doorExteriorStation', { x: 327, y: 307, w: 50, h: 50, from: 'townMap', to: 'exteriorStation' }],
-	['doorExteriorPuclicHousing', { x: 517, y: 462, w: 100, h: 100, from: 'townMap', to: 'exteriorPuclicHousing' }],
-	['doorExteriorFactory', { x: 728, y: 535, w: 50, h: 50, from: 'townMap', to: 'exteriorFactory' }],
+	['doorExteriorStation', { x: 308, y: 314, w: 220, h: 75, from: 'townMap', to: 'exteriorStation', rotate: -33 }],
+	['doorExteriorPuclicHousing', { x: 517, y: 462, w: 130, h: 130, from: 'townMap', to: 'exteriorPuclicHousing', rotate: -33, radius: '10px' }],
+	['doorExteriorFactory', { x: 728, y: 545, w: 150, h: 90, from: 'townMap', to: 'exteriorFactory', rotate: -30, radius: '10px' }],
 	['doorExterior25', { x: 837, y: 651, w: 35, h: 35, from: 'townMap', to: 'exterior25' }],
 	['doorExterior26', { x: 872, y: 634, w: 34, h: 35, from: 'townMap', to: 'exterior26' }],
 	['doorExterior27', { x: 907, y: 615, w: 35, h: 35, from: 'townMap', to: 'exterior27' }],
-	['doorExteriorPark', { x: 1060, y: 753, w: 150, h: 150, from: 'townMap', to: 'exteriorPark' }],
+	['doorExteriorPark', { x: 1060, y: 753, w: 200, h: 200, from: 'townMap', to: 'exteriorPark', rotate: 45, radius: '25px' }],
 	['doorForest', { x: 1360, y: 890, w: 575, h: 118, from: 'townMap', to: 'forest' }],
 	['doorExterior1b', { x: 775, y: 680, w: 50, h: 50, from: 'townMap', to: 'exterior' }],
-	['doorExteriorTownHall', { x: 303, y: 586, w: 50, h: 50, from: 'townMap', to: 'exteriorTownHall' }],
+	['doorExteriorTownHall', { x: 303, y: 586, w: 190, h: 100, from: 'townMap', to: 'exteriorTownHall', rotate: -33 }],
 	['doorExterior28', { x: 556, y: 688, w: 50, h: 50, from: 'townMap', to: 'exterior28' }],
 	['doorExterior29', { x: 682, y: 734, w: 50, h: 50, from: 'townMap', to: 'exterior29' }],
 	['doorExterior30', { x: 633, y: 768, w: 50, h: 50, from: 'townMap', to: 'exterior30' }],
@@ -102,29 +112,20 @@ const doors = new Map([
 	['doorExterior37', { x: 330, y: 819, w: 50, h: 50, from: 'townMap', to: 'exterior37' }],
 	['doorExterior38', { x: 483, y: 860, w: 50, h: 50, from: 'townMap', to: 'exterior38' }],
 	['doorExterior39', { x: 432, y: 896, w: 50, h: 50, from: 'townMap', to: 'exterior39' }],
-	['doorExteriorHospital', { x: 124, y: 751, w: 50, h: 50, from: 'townMap', to: 'exteriorHospital' }],
+	['doorExteriorHospital', { x: 124, y: 751, w: 150, h: 70, from: 'townMap', to: 'exteriorHospital', rotate: -33 }],
 	['doorExterior40', { x: 265, y: 848, w: 50, h: 50, from: 'townMap', to: 'exterior40' }],
 	['doorExterior41', { x: 221, y: 875, w: 50, h: 50, from: 'townMap', to: 'exterior41' }],
 	['doorExterior42', { x: 364, y: 930, w: 50, h: 50, from: 'townMap', to: 'exterior42' }],
 	
-	['exit-exterior2', { from: 'exterior2', to: 'townMap' }],
-	['exit-exterior3', { from: 'exterior3', to: 'townMap' }],
-	['exit-exterior4', { from: 'exterior4', to: 'townMap' }],
-	['exit-exterior5', { from: 'exterior5', to: 'townMap' }],
-	['exit-exterior6', { from: 'exterior6', to: 'townMap' }],
-	['exit-exterior7', { from: 'exterior7', to: 'townMap' }],
-	['exit-exterior8', { from: 'exterior8', to: 'townMap' }],
-	['exit-forest', { from: 'forest', to: 'townMap' }],
-	
-	['doorSun3', { x: 172, y: 473, w: 594, h: 594, from: 'solarSystem', to: 'sun' }],
-	['doorMercuryBall', { x: 624, y: 473, w: 3, h: 3, from: 'solarSystem', to: 'mercuryBall' }],
-	['doorVenusBall', { x: 726, y: 474, w: 4, h: 4, from: 'solarSystem', to: 'venusBall' }],
-	['doorEarthBall3', { x: 827, y: 474, w: 5, h: 5, from: 'solarSystem', to: 'earthBall' }],
+	['doorSun3', { x: 172, y: 473, w: 594, h: 594, from: 'solarSystem', to: 'sun', radius: '500px' }],
+	['doorMercuryBall', { x: 624, y: 473, w: 3, h: 3, from: 'solarSystem', to: 'mercuryBall', radius: '500px' }],
+	['doorVenusBall', { x: 726, y: 474, w: 4, h: 4, from: 'solarSystem', to: 'venusBall', radius: '500px' }],
+	['doorEarthBall3', { x: 827, y: 474, w: 5, h: 5, from: 'solarSystem', to: 'earthBall', radius: '500px' }],
 	['doorMarsBall', { x: 926, y: 474, w: 5, h: 5, from: 'solarSystem', to: 'marsBall' }],
-	['doorJupiterBall', { x: 1079, y: 473, w: 68, h: 68, from: 'solarSystem', to: 'jupiterBall' }],
-	['doorSaturnBall', { x: 1278, y: 473, w: 56, h: 56, from: 'solarSystem', to: 'saturnBall' }],
-	['doorUranusBall', { x: 1454, y: 473, w: 24, h: 24, from: 'solarSystem', to: 'uranusBall' }],
-	['doorNeptuneBall', { x: 1580, y: 473, w: 18, h: 18, from: 'solarSystem', to: 'neptuneBall' }],
+	['doorJupiterBall', { x: 1079, y: 473, w: 68, h: 68, from: 'solarSystem', to: 'jupiterBall', radius: '500px' }],
+	['doorSaturnBall', { x: 1278, y: 473, w: 56, h: 56, from: 'solarSystem', to: 'saturnBall', radius: '500px' }],
+	['doorUranusBall', { x: 1454, y: 473, w: 24, h: 24, from: 'solarSystem', to: 'uranusBall', radius: '500px' }],
+	['doorNeptuneBall', { x: 1580, y: 473, w: 18, h: 18, from: 'solarSystem', to: 'neptuneBall', radius: '500px' }],
 	
 	['doorMercury', { x: 826, y: 500, w: 400, h: 400, from: 'mercuryBall', to: 'mercury' }],
 	['doorVenus', { x: 826, y: 500, w: 400, h: 400, from: 'venusBall', to: 'venus' }],
@@ -137,15 +138,15 @@ const doors = new Map([
 	['doorUranus', { x: 826, y: 500, w: 400, h: 400, from: 'uranusBall', to: 'uranus' }],
 	['doorNeptune', { x: 826, y: 500, w: 400, h: 400, from: 'neptuneBall', to: 'neptune' }],
 	
-	['doorEarthBall2', { x: 359, y: 197, w: 150, h: 150, from: 'moon', to: 'earthBall' }],
-	['doorEarthMap', { x: 820, y: 430, w: 370, h: 370, from: 'earthBall', to: 'earthMap' }],
-	['doorMoon', { x: 1332, y: 256, w: 58, h: 58, from: 'earthBall', to: 'moon' }],
+	['doorEarthBall2', { x: 359, y: 197, w: 150, h: 150, from: 'moon', to: 'earthBall', radius: '500px' }],
+	['doorEarthMap', { x: 820, y: 430, w: 370, h: 370, from: 'earthBall', to: 'earthMap', radius: '500px' }],
+	['doorMoon', { x: 1329, y: 262, w: 62, h: 62, from: 'earthBall', to: 'moon', radius: '500px' }],
 	['doorCosmicWeb', { x: 500, y: 500, w: 50, h: 50, from: 'universe', to: 'cosmicWeb' }],
-	['doorSupercluster', { x: 1096, y: 123, w: 12, h: 12, from: 'cosmicWeb', to: 'supercluster' }],
-	['doorLocalGroup', { x: 781, y: 414, w: 8, h: 8, from: 'supercluster', to: 'localGroup' }],
-	['doorGalaxy', { x: 844, y: 511, w: 30, h: 10, from: 'localGroup', to: 'galaxy' }],
-	['doorGalaxy2', { x: 548, y: 273, w: 10, h: 10, from: 'localGroup', to: 'galaxy2' }],
-	['doorSolarSystem', { x: 609, y: 603, w: 25, h: 25, from: 'galaxy', to: 'solarSystem' }],
+	['doorSupercluster', { x: 1096, y: 123, w: 12, h: 12, from: 'cosmicWeb', to: 'supercluster', radius: '500px' }],
+	['doorLocalGroup', { x: 781, y: 414, w: 12, h: 12, from: 'supercluster', to: 'localGroup', radius: '500px' }],
+	['doorGalaxy', { x: 844, y: 511, w: 30, h: 10, from: 'localGroup', to: 'galaxy', radius: '5px' }],
+	['doorGalaxy2', { x: 548, y: 274, w: 30, h: 10, from: 'localGroup', to: 'galaxy2', radius: '5px', rotate: 39 }],
+	['doorSolarSystem', { x: 609, y: 603, w: 25, h: 25, from: 'galaxy', to: 'solarSystem', radius: '500px' }],
 	['doorBlackhole', { x: 825, y: 409, w: 65, h: 50, from: 'galaxy', to: 'blackhole' }],
 	['doorBlackhole2', { x: 825, y: 409, w: 65, h: 50, from: 'galaxy2', to: 'blackhole2' }],
 	['doorNeighbourSee', { x: 1113, y: 566, w: 80, h: 160, from: 'garden', to: 'neighbourSee' }],
@@ -199,11 +200,19 @@ const doors = new Map([
 	['exit-neptuneBall', { from: 'neptuneBall', to: 'solarSystem' }],
 ]);
 
+for (const [key, value] of doors.entries()) {
+	if (value.from === 'townMap' && value.to) {
+		const exitKey = `exit-${value.to}`;
+		const exitValue = { from: value.to, to: 'townMap' };
+		doors.set(exitKey, exitValue);
+	}
+}
+
 const objects = new Map([
-	['cloud', { x: 414, y: 84, w: 420, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage" }],
+	['cloud', { x: 414, y: 84, w: 420, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage", radius: '20px' }],
 	['graph', { x: 750, y: 520, w: 60, h: 80, in: 'roomMirror', do: 'openlink', variable: 'graphe.html' }],
 	['poem', { x: 650, y: 268, w: 15, h: 10, in: 'room4', do: 'openwindow', variable: 'Amis.txt' }],
-	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3') }],
+	['sink', { x: 682, y: 456, w: 15, h: 40, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/sink.mp3'), radius: '20px' }],
 	['oven', { x: 349, y: 790, w: 70, h: 100, in: 'kitchen', do: 'playSound', variable: githubURL('assets/audios/oven.mp3') }],
 	['book1', { x: 10, y: 701, w: 20, h: 12, in: 'room2', do: 'openbook', variable: githubURL('assets/books/book1/') }],
 	['penguin', { x: 1277, y: 586, w: 55, h: 86, in: 'antarctica', do: 'playSound', variable: githubURL('assets/audios/penguin.mp3') }],
@@ -365,7 +374,8 @@ function getDisplayMetrics() {
 	};
 }
 
-function placeObject(object, objectWidth, objectHeight, objectCenterX, objectCenterY) {
+
+function placeObject(object, objectWidth, objectHeight, objectCenterX, objectCenterY, radius, rotate, tooltip, color, opacity) {
 	if (!currentBackgroundImage) return;
 	const { offsetLeft, offsetTop, ratioX, ratioY } = getDisplayMetrics();
 
@@ -373,6 +383,13 @@ function placeObject(object, objectWidth, objectHeight, objectCenterX, objectCen
 	object.style.top = `${offsetTop + (objectCenterY - objectHeight / 2) * ratioY}px`;
 	object.style.width = `${objectWidth * ratioX}px`;
 	object.style.height = `${objectHeight * ratioY}px`;
+	
+	if (radius)	object.style.borderRadius = radius;
+	if (rotate) object.style.transform = `rotate(${rotate}deg)`;
+	if (EXTRAINF) object.title = formatSceneName(object.id)
+	else if (tooltip) object.title = tooltip;
+	if (color) object.style.backgroundColor = color;
+	if (opacity !== undefined) object.style.opacity = opacity;
 }
 
 function updatePlacement() {
@@ -382,13 +399,13 @@ function updatePlacement() {
 		if (!('x' in data)) continue;
 
 		const el = document.getElementById(id);
-		if (el) placeObject(el, data.w, data.h, data.x, data.y);
+		if (el) placeObject(el, data.w, data.h, data.x, data.y, data.radius, data.rotate, data.tooltip, data.color);
 	}
 	
 
 	for (const [id, data] of objects) {
 		const el = document.getElementById(id);
-		if (el) placeObject(el, data.w, data.h, data.x, data.y);
+		if (el) placeObject(el, data.w, data.h, data.x, data.y, data.radius, data.rotate, data.tooltip, data.color);
 	}
 }
 
