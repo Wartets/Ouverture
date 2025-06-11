@@ -42,7 +42,8 @@ const doors = new Map([
 	['doorGarden3', { x: 500, y: 500, w: 100, h: 100, from: 'livingroom', to: 'garden' }],
 	['doorSun', { x: 1234, y: 11, w: 95, h: 95, from: 'exterior', to: 'sun', radius: '500px' }],
 	['doorSun2', { x: 1213, y: 37, w: 131, h: 99, from: 'garden', to: 'sun', radius: '500px' }],
-	['doorExterior', { x: 768, y: 285, w: 20, h: 20, from: 'earthMap', to: 'exterior', radius: '500px' }],
+	['doorFrance', { x: 768, y: 285, w: 20, h: 20, from: 'earthMap', to: 'france', radius: '500px' }],
+	['doorTownMap1b', { x: 884, y: 227, w: 20, h: 20, from: 'france', to: 'townMap', radius: '500px' }],
 	['doorEarthBall', { x: 826, y: 195, w: 25, h: 25, from: 'sun', to: 'earthBall', radius: '26px' }],
 	
 	['doorGarage', { x: 500, y: 500, w: 50, h: 120, from: 'room3', to: 'garage' }],
@@ -94,7 +95,7 @@ const doors = new Map([
 	['doorExterior24', { x: 883, y: 530, w: 50, h: 50, from: 'townMap', to: 'exterior24' }],
 	['doorExteriorPoliceStation', { x: 941, y: 579, w: 100, h: 50, from: 'townMap', to: 'exteriorPoliceStation', rotate: 33 }],
 	['doorVineyard', { x: 124, y: 188, w: 150, h: 150, from: 'townMap', to: 'vineyard' }],
-	['doorExteriorStation', { x: 308, y: 314, w: 220, h: 75, from: 'townMap', to: 'earthMap', rotate: -33 }],
+	['doorExteriorStation', { x: 308, y: 314, w: 220, h: 75, from: 'townMap', to: 'france', rotate: -33 }],
 	['doorExteriorPuclicHousing', { x: 517, y: 462, w: 130, h: 130, from: 'townMap', to: 'exteriorPuclicHousing', rotate: -33, radius: '10px' }],
 	['doorExteriorFactory', { x: 728, y: 545, w: 150, h: 90, from: 'townMap', to: 'exteriorFactory', rotate: -30, radius: '10px' }],
 	['doorExterior25', { x: 837, y: 651, w: 35, h: 35, from: 'townMap', to: 'exterior25' }],
@@ -121,6 +122,64 @@ const doors = new Map([
 	['doorExterior40', { x: 265, y: 848, w: 50, h: 50, from: 'townMap', to: 'exterior40' }],
 	['doorExterior41', { x: 221, y: 875, w: 50, h: 50, from: 'townMap', to: 'exterior41' }],
 	['doorExterior42', { x: 364, y: 930, w: 50, h: 50, from: 'townMap', to: 'exterior42' }],
+	
+	['doorHighschool', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorHighschool', to: 'highschool', rotate: 30 }],
+	['doorInterior2', { x: 500, y: 500, w: 50, h: 50, from: 'exterior2', to: 'interior2' }],
+	['doorInterior3', { x: 500, y: 500, w: 50, h: 50, from: 'exterior3', to: 'interior3' }],
+	['doorInterior4', { x: 500, y: 500, w: 50, h: 50, from: 'exterior4', to: 'interior4' }],
+	['doorInterior5', { x: 500, y: 500, w: 50, h: 50, from: 'exterior5', to: 'interior5' }],
+	['doorInterior6', { x: 500, y: 500, w: 50, h: 50, from: 'exterior6', to: 'interior6' }],
+	['doorInterior7', { x: 500, y: 500, w: 50, h: 50, from: 'exterior7', to: 'interior7' }],
+	['doorInterior8', { x: 500, y: 500, w: 50, h: 50, from: 'exterior8', to: 'interior8' }],
+	['doorInterior9', { x: 500, y: 500, w: 50, h: 50, from: 'exterior9', to: 'interior9' }],
+	['doorInterior10', { x: 500, y: 500, w: 50, h: 50, from: 'exterior10', to: 'interior10' }],
+	['doorInterior11', { x: 500, y: 500, w: 50, h: 50, from: 'exterior11', to: 'interior11' }],
+	['doorInterior12', { x: 500, y: 500, w: 50, h: 50, from: 'exterior12', to: 'interior12' }],
+	['doorInterior13', { x: 500, y: 500, w: 50, h: 50, from: 'exterior13', to: 'interior13' }],
+	['doorInterior14', { x: 500, y: 500, w: 50, h: 50, from: 'exterior14', to: 'interior14' }],
+	['doorInterior15', { x: 500, y: 500, w: 50, h: 50, from: 'exterior15', to: 'interior15' }],
+	['doorInterior16', { x: 500, y: 500, w: 50, h: 50, from: 'exterior16', to: 'interior16' }],
+	['doorInterior17', { x: 500, y: 500, w: 50, h: 50, from: 'exterior17', to: 'interior17' }],
+	['doorInterior18', { x: 500, y: 500, w: 50, h: 50, from: 'exterior18', to: 'interior18' }],
+	['doorWarehouse', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorWarehouse', to: 'warehouse' }],
+	['doorInterior19', { x: 500, y: 500, w: 50, h: 50, from: 'exterior19', to: 'interior19' }],
+	['doorInterior20', { x: 500, y: 500, w: 50, h: 50, from: 'exterior20', to: 'interior20' }],
+	['doorMosque', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorMosque', to: 'mosque' }],
+	['doorInterior21', { x: 500, y: 500, w: 50, h: 50, from: 'exterior21', to: 'interior21' }],
+	['doorInterior22', { x: 500, y: 500, w: 50, h: 50, from: 'exterior22', to: 'interior22' }],
+	['doorShops', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorShops', to: 'shops' }],
+	['doorNightclub', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorNightclub', to: 'nightclub' }],
+	['doorMall', { x: 500, y: 500, w: 150, h: 50, from: 'exteriorMall', to: 'mall' }],
+	['doorWorkshop', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorWorkshop', to: 'workshop' }],
+	['doorCastel', { x: 500, y: 500, w: 80, h: 50, from: 'exteriorCastel', to: 'castel' }],
+	['doorMovieTheater', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorMovieTheater', to: 'movieTheater' }],
+	['doorInterior23', { x: 500, y: 500, w: 50, h: 50, from: 'exterior23', to: 'interior23' }],
+	['doorInterior24', { x: 500, y: 500, w: 50, h: 50, from: 'exterior24', to: 'interior24' }],
+	['doorPoliceStation', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorPoliceStation', to: 'policeStation' }],
+	['doorPuclicHousing', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorPuclicHousing', to: 'puclicHousing' }],
+	['doorFactory', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorFactory', to: 'factory' }],
+	['doorInterior25', { x: 500, y: 500, w: 50, h: 50, from: 'exterior25', to: 'interior25' }],
+	['doorInterior26', { x: 500, y: 500, w: 50, h: 50, from: 'exterior26', to: 'interior26' }],
+	['doorInterior27', { x: 500, y: 500, w: 50, h: 50, from: 'exterior27', to: 'interior27' }],
+	['doorPark', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorPark', to: 'park' }],
+	['doorTownHall', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorTownHall', to: 'townHall' }],
+	['doorInterior28', { x: 500, y: 500, w: 50, h: 50, from: 'exterior28', to: 'interior28' }],
+	['doorInterior29', { x: 500, y: 500, w: 50, h: 50, from: 'exterior29', to: 'interior29' }],
+	['doorInterior30', { x: 500, y: 500, w: 50, h: 50, from: 'exterior30', to: 'interior30' }],
+	['doorInterior31', { x: 500, y: 500, w: 50, h: 50, from: 'exterior31', to: 'interior31' }],
+	['doorChurch', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorChurch', to: 'church' }],
+	['doorInterior32', { x: 500, y: 500, w: 50, h: 50, from: 'exterior32', to: 'interior32' }],
+	['doorInterior33', { x: 500, y: 500, w: 50, h: 50, from: 'exterior33', to: 'interior33' }],
+	['doorInterior34', { x: 500, y: 500, w: 50, h: 50, from: 'exterior34', to: 'interior34' }],
+	['doorInterior35', { x: 500, y: 500, w: 50, h: 50, from: 'exterior35', to: 'interior35' }],
+	['doorInterior36', { x: 500, y: 500, w: 50, h: 50, from: 'exterior36', to: 'interior36' }],
+	['doorInterior37', { x: 500, y: 500, w: 50, h: 50, from: 'exterior37', to: 'interior37' }],
+	['doorInterior38', { x: 500, y: 500, w: 50, h: 50, from: 'exterior38', to: 'interior38' }],
+	['doorInterior39', { x: 500, y: 500, w: 50, h: 50, from: 'exterior39', to: 'interior39' }],
+	['doorHospital', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorHospital', to: 'hospital' }],
+	['doorInterior40', { x: 500, y: 500, w: 50, h: 50, from: 'exterior40', to: 'interior40' }],
+	['doorInterior41', { x: 500, y: 500, w: 50, h: 50, from: 'exterior41', to: 'interior41' }],
+	['doorInterior42', { x: 500, y: 500, w: 50, h: 50, from: 'exterior42', to: 'interior42' }],
 	
 	['doorSun3', { x: 172, y: 473, w: 594, h: 594, from: 'solarSystem', to: 'sun', radius: '500px' }],
 	['doorMercuryBall', { x: 624, y: 473, w: 3, h: 3, from: 'solarSystem', to: 'mercuryBall', radius: '500px' }],
@@ -169,6 +228,8 @@ const doors = new Map([
 	
 	['exit-factory', { from: 'factory', to: 'exteriorFactory' }],
 	
+	['exit-france', { from: 'france', to: 'earthMap' }],
+	['exit-earthMap', { from: 'earthMap', to: 'earthBall' }],
 	['exit-sun', { from: 'sun', to: 'solarSystem' }],
 	['exit-solarSystem', { from: 'solarSystem', to: 'galaxy' }],
 	['exit-galaxy', { from: 'galaxy', to: 'localGroup' }],
@@ -183,7 +244,7 @@ const doors = new Map([
 	['exit-cellar', { from: 'cellar', to: 'garage' }],
 	['exit-car', { from: 'car', to: 'exterior' }],
 	['exit-antarctica', { from: 'antarctica', to: 'earthMap' }],
-	['exit-sewers', { from: 'sewers', to: 'townMap' }],
+	['exit-sewers', { from: 'sewers', to: 'forest' }],
 	
 	['exit-mercury', { from: 'mercury', to: 'mercuryBall' }],
 	['exit-venus', { from: 'venus', to: 'venusBall' }],
@@ -204,12 +265,17 @@ const doors = new Map([
 ]);
 
 for (const [key, value] of doors.entries()) {
-	if (value.from === 'townMap' && value.to && value.to !== 'earthMap') {
+		if (
+			value.from === 'townMap' &&
+			value.to &&
+			!['earthMap', 'exterior'].includes(value.to)
+		) {
 		const exitKey = `exit-${value.to}`;
 		const exitValue = { from: value.to, to: 'townMap' };
 		doors.set(exitKey, exitValue);
 	}
 }
+
 
 const objects = new Map([
 	['cloud', { x: 414, y: 84, w: 420, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage", radius: '20px' }],
