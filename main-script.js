@@ -21,6 +21,8 @@ function formatSceneName(name) {
 
 const activeAudios = [];
 
+window.missingBackgroundScenes = new Set();
+
 const doors = new Map([
 	['doorInterior', { x: 930, y: 475, w: 55, h: 105, from: 'exterior', to: 'interior', radius: '0px', rotate: 0, tooltip: `Porte d'entrée principale` }],
 	['doorRoom', { x: 1138, y: 237, w: 70, h: 130, from: 'interior', to: 'room' }],
@@ -123,7 +125,7 @@ const doors = new Map([
 	['doorExterior41', { x: 221, y: 875, w: 50, h: 50, from: 'townMap', to: 'exterior41' }],
 	['doorExterior42', { x: 364, y: 930, w: 50, h: 50, from: 'townMap', to: 'exterior42' }],
 	
-	['doorHighschool', { x: 500, y: 500, w: 50, h: 50, from: 'exteriorHighschool', to: 'highschool' }],
+	['doorHighschool', { x: 826, y: 559, w: 112, h: 130, from: 'exteriorHighschool', to: 'highschool' }],
 	['doorInterior2', { x: 500, y: 500, w: 50, h: 50, from: 'exterior2', to: 'interior2' }],
 	['doorInterior3', { x: 500, y: 500, w: 50, h: 50, from: 'exterior3', to: 'interior3' }],
 	['doorInterior4', { x: 500, y: 500, w: 50, h: 50, from: 'exterior4', to: 'interior4' }],
@@ -206,7 +208,7 @@ const doors = new Map([
 	['doorEarthMap', { x: 820, y: 430, w: 370, h: 370, from: 'earthBall', to: 'earthMap', radius: '500px' }],
 	['doorAntarctica', { x: 824, y: 910, w: 1200, h: 70, from: 'earthMap', to: 'antarctica' }],
 	['doorMoon', { x: 1329, y: 262, w: 62, h: 62, from: 'earthBall', to: 'moon', radius: '500px' }],
-	['doorCosmicWeb', { x: 500, y: 500, w: 50, h: 50, from: 'universe', to: 'cosmicWeb' }],
+	['doorCosmicWeb', { x: 652, y: 490, w: 800, h: 800, from: 'universe', to: 'cosmicWeb', radius: '500px', color: 'rgba(0,0,0,0)' }],
 	['doorSupercluster', { x: 1096, y: 123, w: 12, h: 12, from: 'cosmicWeb', to: 'supercluster', radius: '500px' }],
 	['doorLocalGroup', { x: 781, y: 414, w: 12, h: 12, from: 'supercluster', to: 'localGroup', radius: '500px' }],
 	['doorGalaxy', { x: 844, y: 511, w: 30, h: 10, from: 'localGroup', to: 'galaxy', radius: '5px' }],
@@ -333,7 +335,6 @@ for (const [key, value] of doors.entries()) {
 		doors.set(exitKey, exitValue);
 	}
 }
-
 
 const objects = new Map([
 	['cloud', { x: 414, y: 84, w: 420, h: 104, in: 'exterior', do: 'openwindow', variable: "oui, c'est un nuage", radius: '20px' }],
@@ -624,6 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		img.onerror = () => {
 			console.warn(`Image manquante pour ${id}, chargement de backgroundError.png`);
+			missingBackgroundScenes.add(id);
 			img.src = `assets/backgrounds/backgroundError.png`;
 
 			img.onload = () => {
@@ -639,6 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	Promise.all(Array.from(sceneLayers).map(loadImage)).then(() => {
 		readyForPlacement = true;
+		window.dispatchEvent(new Event("backgrounds-loaded"));
 		updatePlacement();
 	});
 

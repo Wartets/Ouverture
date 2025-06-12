@@ -68,6 +68,7 @@ html, body {
 	background-size: contain;
 	cursor: pointer;
 	z-index: 3;
+	filter: brightness(1);
 	transition: filter width 0.2s ease;
 }
 
