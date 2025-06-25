@@ -198,10 +198,10 @@ const doors = new Map([
 	['doorMars', { x: 770, y: 470, w: 758, h: 758, from: 'marsBall', to: 'mars', radius: '500px' }],
 	['doorSun5', { x: 1067, y: 59, w: 62, h: 62, from: 'mars', to: 'sun', radius: '500px' }],
 	['doorJupiter', { x: 826, y: 500, w: 400, h: 400, from: 'jupiterBall', to: 'jupiter', radius: '500px' }],
-	['doorSaturn', { x: 826, y: 500, w: 400, h: 400, from: 'saturnBall', to: 'saturn' }],
+	['doorSaturn', { x: 755, y: 435, w: 550, h: 560, from: 'saturnBall', to: 'saturn', radius: '500px' }],
 	['doorSaturn2', { x: 200, y: 476, w: 530, h: 942, from: 'saturnRing', to: 'saturn' }],
 	['doorSun4', { x: 953, y: 404, w: 40, h: 40, from: 'saturnRing', to: 'sun' }],
-	['doorSaturnRing', { x: 1200, y: 500, w: 300, h: 300, from: 'saturnBall', to: 'saturnRing' }],
+	['doorSaturnRing', { x: 1200, y: 260, w: 250, h: 250, from: 'saturnBall', to: 'saturnRing', radius: '30px' }],
 	['doorUranus', { x: 826, y: 500, w: 400, h: 400, from: 'uranusBall', to: 'uranus', radius: '500px' }],
 	['doorNeptune', { x: 826, y: 500, w: 400, h: 400, from: 'neptuneBall', to: 'neptune', radius: '500px' }],
 	
